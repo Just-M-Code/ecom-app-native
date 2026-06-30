@@ -7,21 +7,19 @@ import { clerkWebhook } from "./controllers/webhooks.js";
 
 const app = express();
 
-// Connect to MongoDB
-await connectDB();
-
-app.post("/api/clerk", express.raw({ type: "application/json" }), clerkWebhook);
-
-//Middleware
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(clerkMiddleware());
 
-const port = process.env.PORT || 3000;
+// Webhook route (must be before clerkMiddleware for raw body)
+app.post("/api/clerk", express.raw({ type: "application/json" }), clerkWebhook);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is Live!");
 });
+
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
