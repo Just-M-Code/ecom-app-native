@@ -1,0 +1,53 @@
+mb-1 = 4
+mb-2 = 8
+mb-3 = 12
+mb-4 = 16
+mb-5 = 20
+mb-6 = 24
+
+fontWeight: "500", // Medium
+fontWeight: "700", // Bold
+
+Tailwind	React Native
+font-thin	"100"
+font-extralight	"200"
+font-light	"300"
+font-normal	"400"
+font-medium	"500"
+font-semibold	"600"
+font-bold	"700"
+font-extrabold	"800"
+font-black	"900"
+
+fontSize: 12,   // text-xs
+fontSize: 14,   // text-sm
+fontSize: 24,   // text-2xl
+Tailwind	React Native
+text-xs	fontSize: 12
+text-sm	fontSize: 14
+text-base	fontSize: 16
+text-lg	fontSize: 18
+text-xl	fontSize: 20
+text-2xl	fontSize: 24
+text-3xl	fontSize: 30
+
+py = padding VERTICAL
+mx = margin HORIZONTAL
+
+
+rounded-xs
+border-radius: var(--radius-xs); /* 0.125rem (2px) */
+rounded-sm
+border-radius: var(--radius-sm); /* 0.25rem (4px) */
+rounded-md
+border-radius: var(--radius-md); /* 0.375rem (6px) */
+rounded-lg
+border-radius: var(--radius-lg); /* 0.5rem (8px) */
+rounded-xl
+border-radius: var(--radius-xl); /* 0.75rem (12px) */
+rounded-2xl
+border-radius: var(--radius-2xl); /* 1rem (16px) */
+rounded-3xl
+border-radius: var(--radius-3xl); /* 1.5rem (24px) */
+rounded-4xl
+border-radius: var(--radius-4xl); /* 2rem (32px) */
