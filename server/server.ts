@@ -1,11 +1,14 @@
 import "dotenv/config";
 import express, { Request, Response } from "express";
 import cors from "cors";
-import connectDB from "./config/db.js";
 import { clerkMiddleware } from "@clerk/express";
 import { clerkWebhook } from "./controllers/webhooks.js";
+import { connect } from "node:http2";
+import connectDB from "./config/db.js";
 
 const app = express();
+
+await connectDB();
 
 // Middleware
 app.use(cors());

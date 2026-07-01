@@ -1,13 +1,10 @@
 import { verifyWebhook } from "@clerk/express/webhooks";
 import { Request, Response } from "express";
-import connectDB from "../config/db"; // ← Import this
 import User from "../models/User.js";
+import connectDB from "../config/db.js";
 
 export const clerkWebhook = async (req: Request, res: Response) => {
   try {
-    // IMPORTANT: Connect to DB first
-    await connectDB();
-
     const evt = await verifyWebhook(req);
 
     if (evt.type === "user.created" || evt.type === "user.updated") {
