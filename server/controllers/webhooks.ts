@@ -4,7 +4,9 @@ import User from "../models/User.js";
 
 export const clerkWebhook = async (req: Request, res: Response) => {
   try {
-    const evt = await verifyWebhook(req);
+    const evt = await verifyWebhook(req, {
+      signingSecret: process.env.CLERK_WEBHOOK_SECRET, // ← Add this
+    });
 
     if (evt.type === "user.created" || evt.type === "user.updated") {
       const user = await User.findOne({ clerkId: evt.data.id });
@@ -14,6 +16,7 @@ export const clerkWebhook = async (req: Request, res: Response) => {
         email: evt.data?.email_addresses[0]?.email_address,
         name: evt.data?.first_name + " " + evt.data?.last_name,
         image: evt.data?.image_url,
+        role: "user" as const,
       };
 
       if (user) {
