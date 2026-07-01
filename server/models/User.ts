@@ -7,11 +7,12 @@ const userSchema = new mongoose.Schema<IUser>(
     email: { type: String, unique: true, trim: true },
     clerkId: { type: String, unique: true, sparse: true },
     image: { type: String },
-    role: { type: String, enum: ["User", "admin"], default: "user" },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
   },
   { timestamps: true },
 );
 
 const User = mongoose.model<IUser>("User", userSchema);
+console.log(User.schema.obj);
 
 export default User;
