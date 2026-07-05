@@ -81,11 +81,11 @@ export interface IProduct extends Document {
 }
 
 export interface IUser extends Document {
-  name?: string;
-  email?: string;
+  name: string;
+  email: string;
   clerkId: string;
-  image?: string;
-  role?: "user" | "admin";
+  image: string;
+  role: "user" | "admin";
   createdAt: Date;
   updatedAt: Date;
 }
