@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { dummyProducts } from "@/assets/assets";
 import { Product } from "@/constants/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
@@ -14,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import { COLORS } from "@/constants";
 import ProductCard from "@/components/ProductCard";
+import api from "@/constants/api";
 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -29,16 +29,17 @@ export default function Shop() {
       setLoadingMore(true);
     }
     try {
-      const start = (pageNumber - 1) * 10;
-      const end = start + 10;
-      const paginatedData = dummyProducts.slice();
+      const queryParams: any = { page: pageNumber, limit: 10 };
+
+      const { data } = await api.get("/products", { params: queryParams });
+
       if (pageNumber === 1) {
-        setProducts(paginatedData);
+        setProducts(data.data);
       } else {
-        setProducts((prev) => [...prev, ...paginatedData]);
+        setProducts((prev) => [...prev, ...data.data]);
       }
 
-      setHasMore(end < dummyProducts.length);
+      setHasMore(data.pagination.page < data.pagination.pages);
       setPage(pageNumber);
     } catch (error) {
       console.error("Pagination error", error);

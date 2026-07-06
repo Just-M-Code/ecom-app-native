@@ -10,7 +10,7 @@ import { json } from "node:stream/consumers";
 export const getDashboardStats = async (req: Request, res: Response) => {
   try {
     const totalUsers = await User.countDocuments();
-    const totaLProdcuts = await Product.countDocuments();
+    const totalProducts = await Product.countDocuments();
     const totalOrders = await Order.countDocuments;
 
     const validOrders = await Order.find({ orderStatus: { $ne: "cancelled" } });
@@ -28,7 +28,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       success: true,
       data: {
         totalUsers,
-        totaLProdcuts,
+        totalProducts,
         totalOrders,
         totalRevenue,
         recentOrders,

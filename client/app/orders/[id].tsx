@@ -14,15 +14,47 @@ import Header from "@/components/Header";
 import { COLORS } from "@/constants";
 import type { Order, Product } from "@/constants/types";
 import { dummyOrders } from "@/assets/assets";
+import { useAuth } from "@clerk/expo";
+import api from "@/constants/api";
+import Toast from "react-native-toast-message";
 
 export default function OrderDetails() {
   const { id } = useLocalSearchParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const { getToken } = useAuth();
+
   const fetchOrderDetails = async () => {
-    setOrder(dummyOrders.find((order) => order._id === id) as any);
-    setLoading(false);
+    try {
+      const token = await getToken();
+      const { data } = await api.get(`/orders/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrder(data.data);
+    } catch (error: any) {
+      console.log("=== ORDER DETAILS ERROR ===");
+
+      console.log("Message:", error.message);
+      console.log("Status:", error.response?.status);
+      console.log("Data:", error.response?.data);
+      console.log("URL:", error.config?.url);
+      console.log("Headers sent:", error.config?.headers);
+      console.log("Full error:", error.toJSON?.());
+
+      const message =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Failed to fetch order details";
+
+      Toast.show({
+        type: "error",
+        text1: "Order Error",
+        text2: message,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

@@ -26,11 +26,11 @@ const cartSchema = new Schema<ICart>(
   { timestamps: true },
 );
 
-cartSchema.methods.calculateTotal = function (this: ICart) {
-  this.totalAmount +
-    this.items.reduce((total: number, item: ICartItem) => {
-      return total + item.price * item.quantity;
-    }, 0);
+cartSchema.methods.calculateTotal = function () {
+  this.totalAmount = this.items.reduce((total: number, item: ICartItem) => {
+    return total + item.price * item.quantity;
+  }, 0);
+
   return this.totalAmount;
 };
 

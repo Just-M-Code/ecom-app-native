@@ -38,16 +38,17 @@ export const getOrder = async (req: Request, res: Response) => {
         .json({ success: false, message: "Order not found" });
     }
 
-    if (
-      order.user.toString() !== req.user._id.toString() &&
-      req.user.role !== "admin"
-    ) {
+    const { userId } = await req.auth();
+
+    if (order.clerkId !== userId && req.user.role !== "admin") {
       return res
         .status(403)
         .json({ success: false, message: "Not authorized" });
     }
-    res.status(403).json({ success: true, data: order });
+
+    res.status(200).json({ success: true, data: order });
   } catch (error: any) {
+    console.error("Get Order Error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -95,6 +96,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const order = await Order.create({
       user: req.user._id,
+      clerkId: req.user.clerkId || (await req.auth()).userId,
       items: orderItems,
       shippingAddress,
       paymentMethod: req.body.paymentMethod || "cash",

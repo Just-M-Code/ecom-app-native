@@ -80,6 +80,10 @@ export default function Page() {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Verify your account</Text>
+        <Text style={{ textAlign: "center", marginBottom: 20, color: "#666" }}>
+          We sent a code to{"\n"}
+          <Text style={{ fontWeight: "600" }}>{emailAddress}</Text>
+        </Text>
         <TextInput
           style={styles.input}
           value={code}
@@ -109,6 +113,22 @@ export default function Page() {
           onPress={() => signUp.verifications.sendEmailCode()}
         >
           <Text style={styles.secondaryButtonText}>I need a new code</Text>
+        </Pressable>
+
+        {/* NEW BUTTON - This is what you need */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.secondaryButton,
+            { marginTop: 12 },
+            pressed && styles.buttonPressed,
+          ]}
+          onPress={async () => {
+            await signUp.reset(); // ← Resets the stuck flow
+            setCode(""); // Clear code field
+            // It will go back to the sign-up form automatically
+          }}
+        >
+          <Text style={styles.secondaryButtonText}>Use a different email</Text>
         </Pressable>
       </View>
     );
@@ -215,6 +235,7 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     color: COLORS.primary,
     marginBottom: 8,
+    textAlign: "center",
   },
   label: {
     fontWeight: "500",

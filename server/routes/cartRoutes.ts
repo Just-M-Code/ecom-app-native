@@ -17,10 +17,10 @@ CartRouter.get("/", protect, getCart);
 CartRouter.post("/add", protect, addToCart);
 
 // Update cart item quantity
-CartRouter.put("/item/:prudctId", protect, updateCartItem);
+CartRouter.put("/item/:productId", protect, updateCartItem);
 
 // Remove item from cart
-CartRouter.delete("/item/:prudctId", protect, removeCartItem);
+CartRouter.delete("/item/:productId", protect, removeCartItem);
 
 // Clear cart
 CartRouter.delete("/", protect, clearCart);

@@ -9,23 +9,28 @@ const orderItemSchema = new mongoose.Schema({
   },
   name: String,
   quantity: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
+    type: Number,
     required: true,
+    min: 1,
   },
 });
 
 const orderSchema = new mongoose.Schema<IOrder>(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    clerkId: {
+      type: String,
+      required: true,
+      index: true,
+    },
     orderNumber: { type: String, unique: true },
     items: [orderItemSchema],
     shippingAddress: {
-      street: { type: String, reuiqred: true },
-      city: { type: String, reuiqred: true },
-      state: { type: String, reuiqred: true },
-      zipCode: { type: String, reuiqred: true },
-      country: { type: String, reuiqred: true },
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      zipCode: { type: String, required: true },
+      country: { type: String, required: true },
     },
     paymentMethod: {
       type: String,
@@ -41,7 +46,7 @@ const orderSchema = new mongoose.Schema<IOrder>(
     paymentIntentId: { type: String },
     orderStatus: {
       type: String,
-      enum: ["place", "processing", "shipped", "delivered", "cancelled"],
+      enum: ["placed", "processing", "shipped", "delivered", "cancelled"],
       default: "placed",
     },
     subtotal: { type: Number, required: true },

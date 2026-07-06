@@ -11,7 +11,6 @@ import {
   Modal,
   FlatList,
   TouchableWithoutFeedback,
-  Platform,
   StyleSheet,
 } from "react-native";
 import Toast from "react-native-toast-message";
@@ -19,8 +18,14 @@ import { COLORS } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { CATEGORIES } from "@/constants";
+import { useAuth } from "@clerk/expo";
+import { useRouter } from "expo-router";
+import api from "@/constants/api";
 
 export default function AddProduct() {
+  const router = useRouter();
+  const { getToken } = useAuth();
+
   const [submitting, setSubmitting] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -58,6 +63,59 @@ export default function AddProduct() {
         text2: "Please fill in all required fields",
       });
       return;
+    }
+    try {
+      setSubmitting(true);
+      const token = await getToken();
+      const formData = new FormData();
+
+      // basic fields
+      const fields = {
+        name,
+        description,
+        price,
+        stock: stock || "0",
+        category,
+        isFeatured: String(isFeatured),
+        sizes,
+      };
+
+      Object.entries(fields).forEach(([key, value]) =>
+        formData.append(key, value),
+      );
+
+      // Images
+      for (const [i, uri] of images.entries()) {
+        const filename = `images-${1}.jpg`;
+
+        formData.append("images", {
+          uri,
+          name: filename,
+          type: "image/jpeg",
+        } as any);
+      }
+
+      const { data } = await api.post("/products", formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!data?.success) throw new Error("Upload failed");
+
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Product created",
+      });
+      router.replace("/admin/products");
+    } catch (error: any) {
+      console.error(error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to Create Product",
+        text2: error.response?.data?.message || "Something went wrong",
+      });
+    } finally {
+      setSubmitting(false);
     }
   };
 

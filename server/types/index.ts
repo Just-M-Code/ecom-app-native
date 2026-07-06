@@ -38,6 +38,7 @@ export interface IOrderItem {
 
 export interface IOrder extends Document {
   user: Types.ObjectId;
+  clerkId: string;
   orderNumber: string;
   items: IOrderItem[];
   shippingAddress: {

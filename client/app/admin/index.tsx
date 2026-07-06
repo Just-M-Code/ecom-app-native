@@ -9,9 +9,11 @@ import {
   StyleSheet,
 } from "react-native";
 import { COLORS, getStatusColor } from "@/constants";
-import { dummyAdminStats } from "@/assets/assets";
+import { useAuth } from "@clerk/expo";
+import api from "@/constants/api";
 
 export default function AdminDashboard() {
+  const { getToken } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -24,9 +26,43 @@ export default function AdminDashboard() {
   });
 
   const fetchStats = async () => {
-    setStats(dummyAdminStats as any);
-    setLoading(false);
-    setRefreshing(false);
+    try {
+      const token = await getToken();
+      if (!token) {
+        console.warn("No token available");
+        return;
+      }
+
+      const { data } = await api.get("/admin/stats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.success && data.data) {
+        setStats(data.data);
+      } else {
+        setStats({
+          totalUsers: 0,
+          totalProducts: 0,
+          totalOrders: 0,
+          totalRevenue: 0,
+          recentOrders: [],
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch admin stats:", error);
+      // Keep safe defaults on error
+      setStats({
+        totalUsers: 0,
+        totalProducts: 0,
+        totalOrders: 0,
+        totalRevenue: 0,
+        recentOrders: [],
+      });
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   };
 
   useEffect(() => {
@@ -58,11 +94,17 @@ export default function AdminDashboard() {
         <View style={styles.statsContainer}>
           <StatCard
             label="Total Revenue"
-            value={`$${stats.totalRevenue.toFixed(2)}`}
+            value={`$${(stats.totalRevenue ?? 0).toFixed(2)}`}
           />
-          <StatCard label="Total Orders" value={stats.totalOrders.toString()} />
-          <StatCard label="Products" value={stats.totalProducts.toString()} />
-          <StatCard label="Users" value={stats.totalUsers.toString()} />
+          <StatCard
+            label="Total Orders"
+            value={(stats.totalOrders ?? 0).toString()}
+          />
+          <StatCard
+            label="Products"
+            value={(stats.totalProducts ?? 0).toString()}
+          />
+          <StatCard label="Users" value={(stats.totalUsers ?? 0).toString()} />
         </View>
       </View>
 
